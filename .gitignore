@@ -1,0 +1,19 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.conda/
+backend/*.log
+
+# Node.js
+node_modules/
+build/
+npm-debug.log*
+
+# macOS
+.DS_Store

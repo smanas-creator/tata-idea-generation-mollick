@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-socketio
+crewai
+langchain-community
+duckduckgo-search
+langchain-openai
+python-dotenv
