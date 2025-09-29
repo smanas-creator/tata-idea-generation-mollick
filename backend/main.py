@@ -18,7 +18,9 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:3001",
-        "https://tata-idea-frontend-el4g3hgpn-manas-sharmas-projects-187f8ce5.vercel.app"
+        "https://tata-idea-frontend.vercel.app",
+        "https://tata-idea-frontend-el4g3hgpn-manas-sharmas-projects-187f8ce5.vercel.app",
+        "https://tata-idea-frontend-nkb3gimd6-manas-sharmas-projects-187f8ce5.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
