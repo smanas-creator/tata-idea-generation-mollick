@@ -112,113 +112,84 @@ npm start
 - **Scalable Architecture:** Easy to add new agent teams and capabilities
 - **Modern Tech Stack:** FastAPI, React 19, CrewAI 0.201.1, OpenAI integration
 
-## Deployment Guide
+## Live Deployment
 
-### 🚀 Free Deployment Strategy
+### 🚀 Application is Live!
 
-The application can be deployed completely **free** using modern cloud platforms. Estimated setup time: ~15 minutes.
+The application is currently deployed and publicly accessible on free hosting platforms.
 
-### **Frontend Deployment (React)**
-**Recommended: Vercel** (best for React apps)
-```bash
-# Deploy frontend
-cd frontend
-npm install -g vercel
-vercel --prod
-```
-- ✅ Free tier: Unlimited static sites
-- ✅ Auto-deploys from Git
-- ✅ Custom domains included
-- ✅ Zero configuration needed
+### 🔗 Live URLs
 
-**Alternative: Netlify**
-```bash
-cd frontend
-npm run build
-# Drag & drop build/ folder to netlify.com
-```
+**Frontend (Vercel):**
+- Production URL: `https://tata-idea-frontend.vercel.app`
+- Deployment URLs:
+  - `https://tata-idea-frontend-nkb3gimd6-manas-sharmas-projects-187f8ce5.vercel.app`
+  - `https://tata-idea-frontend-el4g3hgpn-manas-sharmas-projects-187f8ce5.vercel.app`
 
-### **Backend Deployment (FastAPI + Python)**
-**Recommended: Railway** (best for Python)
-```bash
-# In your backend directory
-pip freeze > requirements.txt
-# Push to GitHub, connect Railway to your repo
-```
-- ✅ Free tier: 500 hours/month
-- ✅ Zero-config Python deployments
-- ✅ PostgreSQL database included
-- ✅ Environment variable management
+**Backend (Render.com):**
+- API URL: `https://tata-idea-generation-mollick.onrender.com`
+- Health Check: `https://tata-idea-generation-mollick.onrender.com/`
+- Generate Endpoint: `https://tata-idea-generation-mollick.onrender.com/api/generate`
 
-**Alternative: Render**
+**GitHub Repository:**
+- `https://github.com/smanas-creator/tata-idea-generation-mollick`
+
+### 📋 Deployment Details
+
+**Frontend (Vercel):**
+- Platform: Vercel
+- Framework: React 19 with TypeScript
+- Build: Automatic from GitHub main branch
+- Free tier: Unlimited static sites
+- Auto-deploys on git push
+
+**Backend (Render.com):**
+- Platform: Render
+- Framework: FastAPI (Python)
+- Deployment: Automatic from GitHub main branch
 - Free tier: 750 hours/month
-- Direct GitHub integration
-- Good FastAPI support
+- Root Directory: `backend/`
+- Start Command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 
-### **Database Options (if needed in future)**
-- **Railway**: Free PostgreSQL included
-- **PlanetScale**: Free MySQL tier
-- **MongoDB Atlas**: Free 512MB tier
+**Environment Variables (Render):**
+- `OPENAI_API_KEY`: Set in Render dashboard
+- `PYTHON_VERSION`: 3.11.0
+- `PORT`: Auto-configured by Render
 
-### 🔧 Pre-Deployment Checklist
+### 🔧 Architecture Changes
 
-1. **Update CORS origins** in `backend/main.py`:
+**Communication Method:**
+- Changed from Socket.IO (WebSockets) to REST API for better reliability on free hosting
+- Frontend makes POST requests to `/api/generate`
+- Backend processes AI agents and returns complete results
+
+**CORS Configuration:**
 ```python
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "https://your-frontend-domain.vercel.app",
-        "http://localhost:3000"  # Keep for local development
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+allow_origins=[
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://tata-idea-frontend.vercel.app",
+    "https://tata-idea-frontend-el4g3hgpn-manas-sharmas-projects-187f8ce5.vercel.app",
+    "https://tata-idea-frontend-nkb3gimd6-manas-sharmas-projects-187f8ce5.vercel.app"
+]
 ```
 
-2. **Environment variables for Railway/Render**:
-   - Add `OPENAI_API_KEY` in deployment dashboard
-   - Add `PORT` (usually auto-configured)
-
-3. **Update frontend Socket.IO connection**:
-```typescript
-const socket = io('https://your-backend-domain.railway.app', {
-  path: '/socket.io/',
-  transports: ['websocket']
-});
-```
-
-### 📝 Step-by-Step Deployment
-
-#### Backend First (Railway):
-1. Push code to GitHub repository
-2. Create account at railway.app
-3. Connect Railway to your GitHub repo
-4. Add environment variable: `OPENAI_API_KEY`
-5. Railway auto-detects Python and deploys
-6. Note your Railway app URL
-
-#### Frontend Second (Vercel):
-1. Update Socket.IO URL in frontend code to Railway backend URL
-2. Install Vercel CLI: `npm install -g vercel`
-3. Run `vercel` from frontend directory
-4. Follow prompts and deploy
-5. Get your Vercel app URL
-
-#### Final Configuration:
-1. Update backend CORS to include Vercel URL
-2. Test the deployed application
-3. Share the Vercel URL for public testing
-
-### 💰 Cost Breakdown
+### 💰 Current Hosting Costs
 - **Frontend (Vercel):** $0/month
-- **Backend (Railway):** $0/month (up to 500 hours)
+- **Backend (Render):** $0/month
 - **Total Monthly Cost:** $0
 
-### 🔗 Live URLs Structure
-- **Frontend:** `https://tata-idea-generation.vercel.app`
-- **Backend:** `https://tata-idea-generation-backend.railway.app`
-- **WebSocket:** Uses same backend URL with `/socket.io/` path
+### ⚠️ Important Notes
+
+1. **First Request Cold Start**: Render's free tier spins down after inactivity. First request may take 30-60 seconds to wake up the service.
+
+2. **Processing Time**: AI agent processing typically takes 30-60 seconds. The UI shows a loading state during this time.
+
+3. **Deployment**: Both services auto-deploy from GitHub main branch. Push to GitHub triggers automatic redeployment.
+
+4. **Render Logs**: Monitor backend at https://render.com/dashboard for deployment status and logs.
+
+5. **Vercel Dashboard**: Monitor frontend at https://vercel.com/dashboard for deployment details.
 
 ## Future Enhancements
 
