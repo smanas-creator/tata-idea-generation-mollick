@@ -159,20 +159,25 @@ async def idea(sid, data):
     if crew:
         print("Crew created successfully. Kicking off...")
         try:
-            # Capture agent conversations and final result
+            print("Executing crew.kickoff() with conversation capture...")
             with AgentConversationCapturer() as capturer:
                 result = crew.kickoff()
+            print(f"Crew kickoff completed. Result type: {type(result)}")
 
             conversations = capturer.get_conversations()
+            print(f"Captured {len(conversations)} agent conversations")
 
             # Send both conversations and final result together
             await sio.emit('complete_result', {
                 'conversations': conversations,
                 'final_document': str(result)
             }, room=sid)
+            print("Sent complete_result to frontend")
 
         except Exception as e:
             print(f"An error occurred during crew kickoff: {e}")
+            import traceback
+            traceback.print_exc()
             await sio.emit('error', {'message': str(e)}, room=sid)
     else:
         print(f"Invalid team selected: {team}")

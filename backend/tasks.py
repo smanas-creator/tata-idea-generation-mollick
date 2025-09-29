@@ -1,6 +1,17 @@
 
 from crewai import Task
 from agents import (
+    # Product Management agents
+    product_manager,
+    market_research_analyst_pm,
+    lead_software_engineer,
+    product_designer,
+    # Marketing agents
+    marketing_manager,
+    content_strategist,
+    seo_specialist,
+    social_media_manager,
+    # HR agents
     hr_manager,
     employee_relations_specialist,
     legal_compliance_officer,
@@ -12,22 +23,22 @@ def create_product_tasks(idea):
         Task(
             description=f'Analyze the market for the product idea: {idea}.',
             expected_output='A detailed market analysis report.',
-            agent_name='Market Research Analyst'
+            agent=market_research_analyst_pm
         ),
         Task(
             description=f'Assess the technical feasibility of the product idea: {idea}.',
             expected_output='A technical feasibility report.',
-            agent_name='Lead Software Engineer'
+            agent=lead_software_engineer
         ),
         Task(
             description=f'Define the user experience (UX) and user interface (UI) for the product idea: {idea}.',
             expected_output='A UX/UI design document.',
-            agent_name='Product Designer'
+            agent=product_designer
         ),
         Task(
             description=f'Create a comprehensive Product Requirements Document (PRD) for the product idea: {idea}.',
             expected_output='A final, well-structured PRD.',
-            agent_name='Product Manager'
+            agent=product_manager
         )
     ]
 
@@ -36,22 +47,22 @@ def create_marketing_tasks(idea):
         Task(
             description=f'Develop a content strategy for the marketing idea: {idea}.',
             expected_output='A detailed content strategy document.',
-            agent_name='Content Strategist'
+            agent=content_strategist
         ),
         Task(
             description=f'Create an SEO strategy for the marketing idea: {idea}.',
             expected_output='A comprehensive SEO strategy.',
-            agent_name='SEO Specialist'
+            agent=seo_specialist
         ),
         Task(
             description=f'Develop a social media plan for the marketing idea: {idea}.',
             expected_output='A detailed social media plan.',
-            agent_name='Social Media Manager'
+            agent=social_media_manager
         ),
         Task(
             description=f'Create a comprehensive marketing campaign plan for the idea: {idea}.',
             expected_output='A final, well-structured marketing campaign plan.',
-            agent_name='Marketing Manager'
+            agent=marketing_manager
         )
     ]
 
