@@ -112,6 +112,114 @@ npm start
 - **Scalable Architecture:** Easy to add new agent teams and capabilities
 - **Modern Tech Stack:** FastAPI, React 19, CrewAI 0.201.1, OpenAI integration
 
+## Deployment Guide
+
+### 🚀 Free Deployment Strategy
+
+The application can be deployed completely **free** using modern cloud platforms. Estimated setup time: ~15 minutes.
+
+### **Frontend Deployment (React)**
+**Recommended: Vercel** (best for React apps)
+```bash
+# Deploy frontend
+cd frontend
+npm install -g vercel
+vercel --prod
+```
+- ✅ Free tier: Unlimited static sites
+- ✅ Auto-deploys from Git
+- ✅ Custom domains included
+- ✅ Zero configuration needed
+
+**Alternative: Netlify**
+```bash
+cd frontend
+npm run build
+# Drag & drop build/ folder to netlify.com
+```
+
+### **Backend Deployment (FastAPI + Python)**
+**Recommended: Railway** (best for Python)
+```bash
+# In your backend directory
+pip freeze > requirements.txt
+# Push to GitHub, connect Railway to your repo
+```
+- ✅ Free tier: 500 hours/month
+- ✅ Zero-config Python deployments
+- ✅ PostgreSQL database included
+- ✅ Environment variable management
+
+**Alternative: Render**
+- Free tier: 750 hours/month
+- Direct GitHub integration
+- Good FastAPI support
+
+### **Database Options (if needed in future)**
+- **Railway**: Free PostgreSQL included
+- **PlanetScale**: Free MySQL tier
+- **MongoDB Atlas**: Free 512MB tier
+
+### 🔧 Pre-Deployment Checklist
+
+1. **Update CORS origins** in `backend/main.py`:
+```python
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://your-frontend-domain.vercel.app",
+        "http://localhost:3000"  # Keep for local development
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+2. **Environment variables for Railway/Render**:
+   - Add `OPENAI_API_KEY` in deployment dashboard
+   - Add `PORT` (usually auto-configured)
+
+3. **Update frontend Socket.IO connection**:
+```typescript
+const socket = io('https://your-backend-domain.railway.app', {
+  path: '/socket.io/',
+  transports: ['websocket']
+});
+```
+
+### 📝 Step-by-Step Deployment
+
+#### Backend First (Railway):
+1. Push code to GitHub repository
+2. Create account at railway.app
+3. Connect Railway to your GitHub repo
+4. Add environment variable: `OPENAI_API_KEY`
+5. Railway auto-detects Python and deploys
+6. Note your Railway app URL
+
+#### Frontend Second (Vercel):
+1. Update Socket.IO URL in frontend code to Railway backend URL
+2. Install Vercel CLI: `npm install -g vercel`
+3. Run `vercel` from frontend directory
+4. Follow prompts and deploy
+5. Get your Vercel app URL
+
+#### Final Configuration:
+1. Update backend CORS to include Vercel URL
+2. Test the deployed application
+3. Share the Vercel URL for public testing
+
+### 💰 Cost Breakdown
+- **Frontend (Vercel):** $0/month
+- **Backend (Railway):** $0/month (up to 500 hours)
+- **Total Monthly Cost:** $0
+
+### 🔗 Live URLs Structure
+- **Frontend:** `https://tata-idea-generation.vercel.app`
+- **Backend:** `https://tata-idea-generation-backend.railway.app`
+- **WebSocket:** Uses same backend URL with `/socket.io/` path
+
 ## Future Enhancements
 
 - Additional agent teams (Finance, Legal, Operations)
@@ -119,3 +227,5 @@ npm start
 - User authentication and project management
 - Integration with additional AI models
 - Advanced analytics and reporting
+- Production database for user sessions
+- Advanced deployment with CI/CD pipelines
