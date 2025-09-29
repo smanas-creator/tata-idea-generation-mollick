@@ -16,13 +16,21 @@ app = FastAPI()
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Allows the frontend origin
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "https://tata-idea-frontend-el4g3hgpn-manas-sharmas-projects-187f8ce5.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=['http://localhost:3000', 'http://localhost:3001'])
+sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=[
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://tata-idea-frontend-el4g3hgpn-manas-sharmas-projects-187f8ce5.vercel.app'
+])
 socket_app = socketio.ASGIApp(sio)
 
 @app.get("/")
