@@ -1,9 +1,8 @@
 import sys
 import io
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
-import socketio
+from pydantic import BaseModel
 import os
 import re
 from crew import create_product_crew, create_marketing_crew, create_hr_crew
@@ -26,19 +25,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-sio = socketio.AsyncServer(async_mode='asgi', cors_allowed_origins=[
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'https://tata-idea-frontend-el4g3hgpn-manas-sharmas-projects-187f8ce5.vercel.app'
-])
-socket_app = socketio.ASGIApp(sio)
+class IdeaRequest(BaseModel):
+    team: str
+    idea: str
 
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-# Mount the socket.io app
-app.mount("/socket.io", socket_app)
 
 class AgentConversationCapturer:
     def __init__(self):
@@ -135,25 +128,14 @@ class AgentConversationCapturer:
     def get_conversations(self):
         return self.conversations
 
-@sio.on('connect')
-async def connect(sid, environ):
-    print(f'connect {sid}')
-    print(f'Frontend connected: {sid}') # Added log
-
-@sio.on('disconnect')
-async def disconnect(sid):
-    print(f'disconnect {sid}')
-
-@sio.on('idea')
-async def idea(sid, data):
-    print(f'Received idea from {sid}: {data}')
-    team = data.get('team')
-    idea_text = data.get('idea')
+@app.post("/api/generate")
+async def generate_idea(request: IdeaRequest):
+    print(f'Received idea: {request}')
+    team = request.team
+    idea_text = request.idea
 
     if not team or not idea_text:
-        print("Missing team or idea")
-        await sio.emit('error', {'message': 'Team and idea are required.'}, room=sid)
-        return
+        return {"error": "Team and idea are required."}
 
     print(f"Creating crew for team: {team}")
     crew = None
@@ -175,18 +157,16 @@ async def idea(sid, data):
             conversations = capturer.get_conversations()
             print(f"Captured {len(conversations)} agent conversations")
 
-            # Send both conversations and final result together
-            await sio.emit('complete_result', {
+            return {
                 'conversations': conversations,
                 'final_document': str(result)
-            }, room=sid)
-            print("Sent complete_result to frontend")
+            }
 
         except Exception as e:
             print(f"An error occurred during crew kickoff: {e}")
             import traceback
             traceback.print_exc()
-            await sio.emit('error', {'message': str(e)}, room=sid)
+            return {"error": str(e)}
     else:
         print(f"Invalid team selected: {team}")
-        await sio.emit('error', {'message': 'Invalid team selected.'}, room=sid)
+        return {"error": "Invalid team selected."}

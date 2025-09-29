@@ -1,10 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
+import React, { useState } from 'react';
 
-const socket = io('https://tata-idea-generation-mollick.onrender.com', {
-  path: '/socket.io/',
-  transports: ['websocket']
-});
+const API_URL = 'https://tata-idea-generation-mollick.onrender.com';
 
 type Step = 'form' | 'communication' | 'result';
 
@@ -21,38 +17,37 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [step, setStep] = useState<Step>('form');
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
-    });
-
-    socket.on('complete_result', (data: { conversations: AgentMessage[], final_document: string }) => {
-      setConversations(data.conversations);
-      setFinalResult(data.final_document);
-      setIsGenerating(false);
-      setStep('communication');
-    });
-
-    socket.on('error', (data: { message: string }) => {
-      alert(`Error: ${data.message}`);
-      setIsGenerating(false);
-      setStep('form');
-    });
-
-    return () => {
-      socket.off('connect');
-      socket.off('complete_result');
-      socket.off('error');
-    };
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setConversations([]);
     setFinalResult('');
     setIsGenerating(true);
-    setStep('form'); // Stay on form but show loading
-    socket.emit('idea', { team, idea });
+    setStep('form');
+
+    try {
+      const response = await fetch(`${API_URL}/api/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ team, idea }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+        setIsGenerating(false);
+      } else {
+        setConversations(data.conversations || []);
+        setFinalResult(data.final_document || '');
+        setIsGenerating(false);
+        setStep('communication');
+      }
+    } catch (error) {
+      alert(`Error: ${error}`);
+      setIsGenerating(false);
+    }
   };
 
   return (
